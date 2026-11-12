@@ -1,0 +1,90 @@
+{
+  "nonce": "ze7OuIm-zlWBdPZLvEGrY",
+  "events": [
+    {
+      "module": 2,
+      "step": "reflect",
+      "event_type": "module_evaluation",
+      "data": {
+        "narrative": "The learner demonstrated mastery of technical writing and executive communication by creating a scannable, top-down technical explanation of an API migration. They eliminated bureaucratic throat-clearing, defined all jargon with real-world analogies, and delivered active-voice, time-bounded next steps.",
+        "overall": 5,
+        "dimension_scores": [
+          {
+            "key": "review_quality",
+            "score": 5,
+            "observation": "Identified 15 distinct writing defects in the flawed document and systematically refactored each one.",
+            "evidence": "Categorized buried lede, 12 passive voice instances, and undefined acronyms in progress/communication/module-02-break-analysis.md."
+          },
+          {
+            "key": "writing_clarity",
+            "score": 5,
+            "observation": "Applied the One-Job Rule across all paragraphs and reduced document length by 38.6% without omitting technical details.",
+            "evidence": "Rewrote proposal from 350 to 215 words in progress/communication/module-02-rewritten-document.md."
+          },
+          {
+            "key": "audience_awareness",
+            "score": 5,
+            "observation": "Tailored documentation for a new hire (Priya) with intuitive analogies and clear onboarding context.",
+            "evidence": "Used buffet vs. fixed-menu analogy for GraphQL vs. REST in technical-explanation.md."
+          },
+          {
+            "key": "structure_quality",
+            "score": 5,
+            "observation": "Implemented a top-down pyramid structure with BLUF opening, tables for risks, and hierarchical headings.",
+            "evidence": "Opened with decision and 40% call reduction metric in sentence 1 of technical-explanation.md."
+          },
+          {
+            "key": "actionability",
+            "score": 5,
+            "observation": "Replaced vague passive placeholders with concrete time-stamped milestones, named buddies, and repository links.",
+            "evidence": "Assigned specific onboarding tasks with days, times, and branches in Next Steps."
+          }
+        ],
+        "strengths": [
+          "Applied BLUF (Bottom Line Up Front) effectively to state core architectural decisions in the first sentence.",
+          "Converted passive voice into active voice with explicit ownership across all action items."
+        ],
+        "growth_areas": [],
+        "recommendation": "Maintain this scannable structure and active ownership when authoring technical proposals and RFCs in Module 03.",
+        "public_evidence": [
+          {
+            "artifact": "technical-explanation.md",
+            "student_action": "Drafted a 1-page REST-to-GraphQL migration technical explanation adhering to top-down pyramid structure and BLUF principles.",
+            "technical_detail": "Architecture explanation detailing 47 REST endpoint reduction, GraphQL query shaping, and Apollo caching mitigation.",
+            "proof": "technical-explanation.md",
+            "ability": "Writing high-clarity technical explanations that align cross-functional teams and accelerate engineer onboarding.",
+            "reviewer_value": "Eliminates documentation ambiguity, accelerating cross-team execution and new-hire ramp up.",
+            "confidence": "demonstrated"
+          }
+        ],
+        "student_knowledge": {
+          "terminology_gaps": [],
+          "concepts_demonstrated": [
+            {
+              "concept": "audience-awareness",
+              "evidence": "Targeted Priya with onboarding buddies, analogies, and explicit Monday/Tuesday setup steps."
+            },
+            {
+              "concept": "clarity",
+              "evidence": "Reduced word count by 38.6% while retaining all technical facts and eliminating buried ledes."
+            }
+          ],
+          "teaching_approaches": [
+            {
+              "concept": "Technical scannability",
+              "approach": "example",
+              "detail": "Analysis of Knight Capital runbook failure and comparative rewrite of REST-to-GraphQL proposal.",
+              "effective": true
+            }
+          ],
+          "effective_level": "intermediate",
+          "learning_style_signals": [
+            "Demonstrates exceptional proficiency with top-down structured outlines, comparative audits, and active-voice task trees."
+          ],
+          "confidence_level": "high"
+        }
+      }
+    }
+  ]
+}
+

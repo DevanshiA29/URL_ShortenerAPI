@@ -1,0 +1,94 @@
+{
+  "nonce": "dGsWA2EplHSzuLBnbk8E7",
+  "events": [
+    {
+      "module": 4,
+      "step": "reflect",
+      "event_type": "module_evaluation",
+      "data": {
+        "narrative": "The student crafted an exemplary blameless postmortem for a critical e-commerce order-dropping outage. They rigorously separated human triggers from systemic root causes, audited a blame-heavy anti-pattern draft with deep analytical precision, and produced verifiable action items with explicit role owners and definitions of done.",
+        "overall": 5,
+        "dimension_scores": [
+          {
+            "key": "review_quality",
+            "score": 5,
+            "observation": "Audited the blame-heavy peer postmortem, catching 17 distinct instances of personal blame, pointing out that 0 of 5 action items were systemic, and demonstrating how blaming individuals destroys incident visibility.",
+            "evidence": "Identified that blaming responders incentivizes concealment of near-misses and leaves the underlying swallowed exception vulnerability untouched."
+          },
+          {
+            "key": "writing_clarity",
+            "score": 5,
+            "observation": "Produced a clear executive summary and structured chronological timeline highlighting exact time-to-detect and time-to-mitigate metrics.",
+            "evidence": "postmortem.md clearly captures TTD (55m), TTM (39m), $186k revenue impact, and resolution timeline in a structured table."
+          },
+          {
+            "key": "audience_awareness",
+            "score": 5,
+            "observation": "Maintained an objective, blameless tone throughout, framing all failures around process, tooling, and architectural guardrails rather than individual engineers.",
+            "evidence": "Scanned document with zero personal names; replaced individual blame with systemic descriptions (e.g. 'on-call responder', 'Platform Engineering rotation')."
+          },
+          {
+            "key": "structure_quality",
+            "score": 5,
+            "observation": "Followed industry-standard postmortem structure: Executive Summary -> Chronological Timeline -> Systemic Root Causes -> Contributing Factors -> Action Items -> Lessons Learned.",
+            "evidence": "Organized into six distinct sections, distinguishing root causes (swallowed exception) from contributing factors (untested rollback, alert latency)."
+          },
+          {
+            "key": "actionability",
+            "score": 5,
+            "observation": "Constructed high-impact action items with role ownership, realistic deadlines, and unambiguous definitions of done.",
+            "evidence": "All 5 action items specify system changes: exception refactoring, Datadog zero-order monitor, automated weekly canary rollback CI testing, and Zod config validation."
+          }
+        ],
+        "strengths": [
+          "Demonstrated systems-first thinking by rejecting 'be more careful' human behavioral traps in favor of mechanical automation and CI checks.",
+          "Distinguished between triggering actions and systemic root causes, recognizing that error masking was the true failure mechanism."
+        ],
+        "growth_areas": [],
+        "recommendation": "In future incident reviews, continue integrating semantic business invariants alongside technical vitals across all alerting tiers.",
+        "public_evidence": [
+          {
+            "artifact": "postmortem.md — OrderProcessor SEV-1 Incident Postmortem",
+            "student_action": "Authored comprehensive blameless postmortem analyzing a 2-hour silent order loss incident, formulating 5 concrete engineering remediations.",
+            "technical_detail": "Complete postmortem document with executive summary, timeline, systemic root causes, contributing factors, and action items table.",
+            "proof": "postmortem.md includes TTD/TTM analysis, swallowed exception root cause, untested rollback contributing factor, and automated CI/monitoring action items.",
+            "ability": "Conducts blameless incident investigations that convert catastrophic operational outages into permanent systemic resilience.",
+            "reviewer_value": "Shows mature production engineering leadership: understands that reliability is an organizational feedback loop dependent on psychological safety and mechanical verification.",
+            "confidence": "demonstrated"
+          }
+        ],
+        "student_knowledge": {
+          "terminology_gaps": [],
+          "concepts_demonstrated": [
+            {
+              "concept": "Blameless culture principles",
+              "evidence": "Replaced individual fault-finding with systemic inquiry into why tooling allowed failure."
+            },
+            {
+              "concept": "Systemic action items vs behavioral wishes",
+              "evidence": "Formulated automated CI checks and canary monitors instead of 'remind team to be careful'."
+            },
+            {
+              "concept": "Root causes vs contributing factors",
+              "evidence": "Separated the primary error-suppression failure from secondary detection and rollback delays."
+            }
+          ],
+          "teaching_approaches": [
+            {
+              "concept": "Blameless postmortems",
+              "approach": "example",
+              "detail": "Analyzed Etsy 2012 database deletion case study to explain incident reporting incentives.",
+              "effective": true
+            }
+          ],
+          "effective_level": "intermediate",
+          "learning_style_signals": [
+            "Excels when analyzing the contrast between punitive and systems-oriented postmortem artifacts."
+          ],
+          "confidence_level": "high"
+        }
+      }
+    }
+  ]
+}
+

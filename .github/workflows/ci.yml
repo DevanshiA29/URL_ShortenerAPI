@@ -1,0 +1,99 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pipeline:
+    name: Lint, Test, Build, and Publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+      packages: write
+
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Code Quality & Linting (Fail-Fast)
+        run: npm run lint
+
+      - name: Execute Automated Test Suite
+        run: npm test
+
+      - name: Compile Application
+        run: npm run build
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Production Container Image
+        run: |
+          docker build -t myservice:${{ github.sha }} -t myservice:latest .
+
+      - name: Verify Image Size Under 200MB Threshold
+        run: |
+          SIZE_BYTES=$(docker image inspect myservice:${{ github.sha }} --format='{{.Size}}')
+          MAX_BYTES=209715200 # 200MB
+          SIZE_MB=$((SIZE_BYTES / 1024 / 1024))
+          echo "Verified Image Size: ${SIZE_MB}MB (${SIZE_BYTES} bytes)"
+          if [ "$SIZE_BYTES" -gt "$MAX_BYTES" ]; then
+            echo "::error::Image size of ${SIZE_MB}MB exceeds 200MB threshold!"
+            exit 1
+          fi
+
+      - name: Container Runtime Smoke Test
+        run: |
+          docker run -d --name smoke-test -p 3000:3000 \
+            -e NODE_ENV=production \
+            -e MONGODB_URI=mongodb://localhost:27017/smoke_test \
+            -e JWT_SECRET=smoke-test-secret-min-32-characters-ok \
+            -e CORS_ORIGIN=* \
+            myservice:${{ github.sha }}
+          sleep 3
+          curl --fail http://localhost:3000/live || (docker logs smoke-test && exit 1)
+          docker stop smoke-test && docker rm smoke-test
+
+      - name: Authenticate to Container Registry
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag and Publish Production Image
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          IMAGE_URI=ghcr.io/${{ github.repository }}
+          IMAGE_URI=$(echo "$IMAGE_URI" | tr '[:upper:]' '[:lower:]')
+          docker tag myservice:${{ github.sha }} "${IMAGE_URI}:${{ github.sha }}"
+          docker tag myservice:${{ github.sha }} "${IMAGE_URI}:latest"
+          echo "Publishing container artifact: ${IMAGE_URI}:${{ github.sha }}"
+          docker push "${IMAGE_URI}:${{ github.sha }}"
+          docker push "${IMAGE_URI}:latest"
+

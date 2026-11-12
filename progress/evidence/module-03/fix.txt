@@ -1,0 +1,29 @@
+Module 03 FIX evidence
+
+Minimal reproduction:
+POST /links with:
+{"long_url":"javascript:alert(1)"}
+
+Before the fix, the endpoint incorrectly accepted the malicious URL with HTTP 201 and stored it in MongoDB.
+
+Root cause:
+The request validation pipeline was not active in the running compiled application because dist/main.js did not contain the global ValidationPipe.
+
+Fix:
+Added ValidationPipe to main.ts with whitelist, forbidNonWhitelisted, and transform enabled, then rebuilt the application from a clean dist directory.
+
+Why the fix closes the hole:
+The request body is now validated against CreateLinkDto before LinksService.create() runs. The custom IsSafeHttpUrl validator only permits HTTP and HTTPS URLs and rejects dangerous schemes, control characters, encoded URL delimiters, backslashes, and userinfo-based URLs. Invalid requests therefore cannot reach persistence.
+
+Regression verification:
+- javascript: URL -> 400
+- whitespace-wrapped javascript: URL -> 400
+- data: URL -> 400
+- scheme-relative URL -> 400
+- encoded URL delimiters -> 400
+- backslash URL -> 400
+- userinfo URL -> 400
+- valid HTTPS URL -> 201
+
+Permanent regression script:
+progress/evidence/module-03/security-regression.sh

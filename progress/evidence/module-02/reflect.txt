@@ -1,0 +1,16 @@
+Database decision:
+Chose MongoDB because the link and click-event data fit a document-oriented model and it gives flexibility while keeping the initial persistence layer simple.
+
+Index choices:
+- Link.code: unique index for fast lookup of a short code.
+- Link.created_by: index for queries filtering links by creator.
+- ClickEvent.link_id + clicked_at: compound index for retrieving a link's click events efficiently and in time order.
+
+What we proved:
+The database stores and retrieves links correctly, and the click-event query uses the compound index.
+
+Remaining risk:
+The API does not yet enforce authorization or complete input validation, so unauthorized access or malformed input could still be a risk.
+
+Mitigation:
+Add authentication/authorization checks and request validation before exposing the full API.
