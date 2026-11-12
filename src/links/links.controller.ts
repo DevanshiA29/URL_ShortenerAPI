@@ -11,6 +11,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
+import { ApiTags } from '@nestjs/swagger';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { LinksService } from './links.service';
@@ -26,6 +27,7 @@ function extractPrincipal(
   return 'anonymous';
 }
 
+@ApiTags('links')
 @Controller('links')
 export class LinksController {
   constructor(private readonly linksService: LinksService) {}

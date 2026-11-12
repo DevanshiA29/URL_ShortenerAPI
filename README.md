@@ -6,6 +6,28 @@ Designed with strict resilience boundaries: cache-aside redirection, decoupled a
 
 ---
 
+## Quick Deploy & Interactive Testing
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/DevanshiA29/URL_ShortenerAPI)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template/deploy?template=https://github.com/DevanshiA29/URL_ShortenerAPI)
+
+### Fastest Ways to Test the API
+
+#### 1. Interactive Swagger UI (Zero Setup)
+When running locally or deployed, open:
+👉 **`http://localhost:3000/docs`** (or `<your-deployed-url>/docs`)
+
+An interactive OpenAPI Swagger console is mounted directly on `/docs`, allowing you to create short links, trigger redirects, run ReDoS-safe searches, and inspect real-time click telemetry with point-and-click execution.
+
+#### 2. One-Command Full Stack (Docker Compose)
+Spin up the API, MongoDB 7, and Redis 7 in a single command:
+```bash
+docker compose up --build
+```
+Then visit **`http://localhost:3000/docs`** to test all endpoints immediately.
+
+---
+
 ## Architecture Overview
 
 ```
@@ -87,6 +109,7 @@ Designed with strict resilience boundaries: cache-aside redirection, decoupled a
 - **Cache & Message Broker**: Redis 7+ (via `ioredis` & BullMQ)
 - **Resilience**: Opossum (Circuit Breaker)
 - **Validation**: Zod (environment) & Class-Validator (DTOs)
+- **API Documentation**: OpenAPI 3.0 / Swagger UI (`/docs`)
 - **Metrics**: Prometheus (`prom-client`)
 - **Testing**: Jest (ESM mode with `--experimental-vm-modules`) & Supertest
 
@@ -97,7 +120,7 @@ Designed with strict resilience boundaries: cache-aside redirection, decoupled a
 ```
 src/
 ├── config.ts                          # Startup env validation with Zod (fails fast on boot)
-├── main.ts                            # Application entry point with global pipes, filters, hooks
+├── main.ts                            # Application entry point with Swagger, global pipes, filters
 ├── worker.ts                          # Standalone background worker process for BullMQ jobs
 ├── app.module.ts                      # Root NestJS module wiring feature modules & middleware
 ├── app.controller.ts                  # Liveness (/live), Readiness (/ready), Health (/health)
@@ -169,7 +192,9 @@ src/
 
 ---
 
-## API Reference
+## API Reference & cURL Examples
+
+*(All endpoints can also be tested interactively at `/docs`)*
 
 ### 1. Create Short Link
 ```bash
@@ -177,8 +202,8 @@ curl -X POST http://localhost:3000/links \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer dev-token" \
   -d '{
-    "long_url": "https://example.com/deep/path?ref=campaign",
-    "tags": ["marketing", "q4"]
+    "long_url": "https://github.com/DevanshiA29/URL_ShortenerAPI",
+    "tags": ["github", "production"]
   }'
 ```
 **Response (201 Created)**:
@@ -187,7 +212,7 @@ curl -X POST http://localhost:3000/links \
   "id": "6733918a992bc...",
   "code": "aB3x9Z",
   "short_url": "http://localhost:3000/r/aB3x9Z",
-  "long_url": "https://example.com/deep/path?ref=campaign",
+  "long_url": "https://github.com/DevanshiA29/URL_ShortenerAPI",
   "created_at": "2026-11-12T20:00:00.000Z"
 }
 ```
@@ -199,7 +224,7 @@ curl -i http://localhost:3000/r/aB3x9Z
 **Response (302 Found)**:
 ```http
 HTTP/1.1 302 Found
-Location: https://example.com/deep/path?ref=campaign
+Location: https://github.com/DevanshiA29/URL_ShortenerAPI
 X-Request-ID: 7a94a50f-2b58-4501-8b01-e7811f599dc2
 ```
 
@@ -210,7 +235,7 @@ curl -X GET "http://localhost:3000/links?page=1&limit=20"
 
 ### 4. Search Links (ReDoS Safe)
 ```bash
-curl -X GET "http://localhost:3000/links/search?q=example&tag=marketing" \
+curl -X GET "http://localhost:3000/links/search?q=github&tag=production" \
   -H "Authorization: Bearer dev-token"
 ```
 
@@ -219,7 +244,7 @@ curl -X GET "http://localhost:3000/links/search?q=example&tag=marketing" \
 curl -X PATCH http://localhost:3000/links/6733918a992bc... \
   -H "Content-Type: application/json" \
   -d '{
-    "long_url": "https://example.com/new-destination",
+    "long_url": "https://github.com/DevanshiA29/URL_ShortenerAPI#readme",
     "tags": ["updated"]
   }'
 ```
@@ -263,8 +288,8 @@ curl -X GET "http://localhost:3000/links/6733918a992bc.../analytics?from=2026-11
 ### Installation
 ```bash
 # 1. Clone the repository
-git clone <repo-url>
-cd api
+git clone https://github.com/DevanshiA29/URL_ShortenerAPI.git
+cd URL_ShortenerAPI
 
 # 2. Install dependencies
 npm install
@@ -276,8 +301,8 @@ cp .env.example .env
 # 4. Start in development watch mode
 npm run start:dev
 
-# 5. Start standalone worker (optional, in separate terminal)
-npm run worker
+# 5. Open Swagger UI in browser
+# http://localhost:3000/docs
 ```
 
 ### Verification & Testing
@@ -288,7 +313,7 @@ npm test
 # Run end-to-end tests
 npm run test:e2e
 
-# Run linter
+# Run linter (0 errors, 0 warnings)
 npm run lint
 
 # Build production bundle
@@ -297,17 +322,23 @@ npm run build
 
 ---
 
-## Docker Deployment
+## Docker & Cloud Deployment
 
-The application includes a production-optimized multi-stage `Dockerfile`:
-- Stage 1: Dependency resolution with clean dev-dependency omission.
-- Stage 2: Ultra-lightweight Alpine runtime running as a dedicated non-root user (`appuser`).
-
+### 1. Docker Compose (Local Full-Stack)
 ```bash
-# Build production Docker image (< 150MB)
+docker compose up --build
+```
+Spins up:
+- URL Shortener API on port 3000
+- MongoDB 7 on port 27017
+- Redis 7 on port 6379
+
+### 2. Production Docker Image
+```bash
+# Build ultra-lightweight Alpine container (< 150MB)
 docker build -t url-shortener-api:latest .
 
-# Run container
+# Run container as non-root user
 docker run -d \
   --name shortener-api \
   -p 3000:3000 \

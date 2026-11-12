@@ -1,6 +1,8 @@
 import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AnalyticsService } from './analytics.service';
 
+@ApiTags('analytics')
 @Controller('links/:id/analytics')
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}

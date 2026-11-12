@@ -1,4 +1,5 @@
 import { Transform } from 'class-transformer';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   ArrayMaxSize,
   IsArray,
@@ -94,6 +95,10 @@ function IsFutureDate(validationOptions?: ValidationOptions) {
 }
 
 export class CreateLinkDto {
+  @ApiProperty({
+    description: 'Target URL to shorten (HTTP or HTTPS)',
+    example: 'https://github.com/DevanshiA29/URL_ShortenerAPI',
+  })
   @Transform(({ value }) =>
     typeof value === 'string' ? value.trim() : value,
   )
@@ -101,11 +106,19 @@ export class CreateLinkDto {
   @IsSafeHttpUrl()
   long_url: string;
 
+  @ApiPropertyOptional({
+    description: 'Optional ISO 8601 future expiration timestamp',
+    example: '2026-12-31T23:59:59.000Z',
+  })
   @IsOptional()
   @IsISO8601()
   @IsFutureDate()
   expires_at?: string;
 
+  @ApiPropertyOptional({
+    description: 'Optional tags for categorization and search',
+    example: ['engineering', 'github'],
+  })
   @IsOptional()
   @IsArray()
   @ArrayMaxSize(10)

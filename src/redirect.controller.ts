@@ -9,10 +9,12 @@ import {
 import type { Request, Response } from 'express';
 import * as crypto from 'node:crypto';
 
+import { ApiTags } from '@nestjs/swagger';
 import { LinksService } from './links/links.service';
 import { CacheService } from './cache/cache.service';
 import { AnalyticsQueueService } from './analytics/analytics.queue';
 
+@ApiTags('redirect')
 @Controller('r')
 export class RedirectController {
   private readonly logger = new Logger(RedirectController.name);

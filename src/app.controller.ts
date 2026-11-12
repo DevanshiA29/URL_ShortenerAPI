@@ -1,9 +1,11 @@
 import { Controller, Get, HttpStatus, HttpException } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { CacheService } from './cache/cache.service';
 import { InjectConnection } from '@nestjs/mongoose';
 import type { Connection } from 'mongoose';
 
+@ApiTags('health')
 @Controller()
 export class AppController {
   constructor(
